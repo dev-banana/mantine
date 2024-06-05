@@ -117,6 +117,9 @@ export interface UseFieldReturnType<
   /** Resets touched state to false */
   resetTouched: () => void;
 
+  /** Reset the initialValue to a new state */
+  resetDirty: (value: T) => void;
+
   /** key that should be added to the input when mode is uncontrolled */
   key: number;
 }
@@ -138,6 +141,7 @@ export function useField<
   resolveValidationError,
   type = 'input' as FieldType,
 }: UseFieldInput<T, FieldType, Mode>): UseFieldReturnType<T, FieldType, Mode> {
+  const [localInitialValue, setLocalInitialValue] = useState(initialValue);
   const [valueState, setValueState] = useState(initialValue);
   const valueRef = useRef(valueState);
   const [key, setKey] = useState(0);
@@ -191,16 +195,16 @@ export function useField<
   );
 
   const reset = useCallback(() => {
-    setValue(initialValue);
+    setValue(localInitialValue);
     setError(null);
     setTouched(false);
-  }, [initialValue]);
+  }, [localInitialValue]);
 
   const getValue = useCallback(() => valueRef.current, []);
 
   const isTouched = useCallback(() => touchedRef.current, []);
 
-  const isDirty = useCallback(() => valueRef.current !== initialValue, [initialValue]);
+  const isDirty = useCallback(() => valueRef.current !== localInitialValue, [localInitialValue]);
 
   const _validate = useCallback(async () => {
     const validationResult = validate?.(valueRef.current);
@@ -255,6 +259,8 @@ export function useField<
 
   const resetTouched = useCallback(() => setTouched(false), []);
 
+  const resetDirty = useCallback((newInitialValue: T) => setLocalInitialValue(newInitialValue), []);
+
   return {
     key,
     getValue,
@@ -271,5 +277,6 @@ export function useField<
     isTouched,
     isDirty,
     resetTouched,
+    resetDirty,
   };
 }

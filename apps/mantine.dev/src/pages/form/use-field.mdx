@@ -91,6 +91,9 @@ export interface UseFieldReturnType<ValueType> {
   /** Resets touched state to false */
   resetTouched: () => void;
 
+  /** Reset the initialValue to a new state */
+  resetDirty: (value: ValueType) => void;
+
   /** key that should be added to the input when mode is uncontrolled */
   key: number;
 }

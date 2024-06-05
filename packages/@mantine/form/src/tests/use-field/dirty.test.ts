@@ -17,4 +17,16 @@ describe('@mantine/form/use-field/dirty', () => {
     act(() => hook.result.current.reset());
     expect(hook.result.current.isDirty()).toBe(false);
   });
+
+  it('reset dirty with a to new value', () => {
+    const hook = renderHook(() => useField({ initialValue: 'test' }));
+    expect(hook.result.current.isDirty()).toBe(false);
+    act(() => hook.result.current.getInputProps().onChange('new value'));
+    expect(hook.result.current.isDirty()).toBe(true);
+    act(() => hook.result.current.resetDirty('new initial'));
+    expect(hook.result.current.isDirty()).toBe(true);
+    act(() => hook.result.current.reset());
+    expect(hook.result.current.isDirty()).toBe(false);
+    expect(hook.result.current.getValue()).toBe('new initial');
+  });
 });
